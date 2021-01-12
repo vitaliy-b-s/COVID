@@ -1,0 +1,16 @@
+{
+  "name": "covid",
+  "version": "1.0.0",
+  "description": "covid-dashboard",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "js",
+    "node",
+    "webpack"
+  ],
+  "author": "vitaliy <butaji9i54@gmail.com>",
+  "license": "ISC"
+}
