@@ -15,15 +15,22 @@
                 <div class="total__value">80 000 000</div>
             </div>
             <div class="countries">
-                <div class="countries__title">Cases by country</div>
+                <div class="countries__title">Cases by
+                    <form class="sort-form">
+                        <input type="radio" name="sort" value="byCountryName" id="byCountryName" checked class="input">
+                        <label for="byCountryName" class="input-label">By Country</label>
+                        <input type="radio" name="sort" value="byNumberOfCases" id="byNumberOfCases" class="input">
+                        <label for="byNumberOfCases" class="input-label">By Number</label>
+                    </form>
+                </div>
                 <ul class="countries__list">
-                    <li class="country">
+                    <!-- <li class="country">
                         <div class="country__cases_value">1 000 000</div>
                         <div class="country__name">Belarus</div>
                     </li>
                     <li class="country">
                         <div class="country__cases_value">200 000</div>
-                        <div class="country__name">Russiaeqeqeqeqeqe</div>
+                        <div class="country__name">Russia</div>
                     </li>
                     <li class="country">
                         <div class="country__cases_value">1 031</div>
@@ -36,34 +43,34 @@
                     <li class="country">
                         <div class="country__cases_value">13131 1313</div>
                         <div class="country__name">Germany</div>
-                    </li>
+                    </li> -->
                 </ul>
-                <button class="expand__button">x</button>
+                <button class="expand__button"><i class="fas fa-expand-arrows-alt"></i></button>
             </div>
         </div>
         <div class="map">
-            <button class="expand__button">X</button>
+            <button class="expand__button"><i class="fas fa-expand-arrows-alt"></i></button>
         </div>
         <div class="details">
             <div class="statistics">
-                <div class="statistics__title">In Whole World</div>
+                <div class="statistics__title">In The Whole World</div>
                 <div class="statistics-case statisitics__parameter">
-                    Всего заболевших:
+                    Total cases:
                     <div class="statistics-case__value">313131131</div>
                 </div>
                 <div class="statistics-death statisitics__parameter">
-                    Cмертей:
+                    Death:
                     <div class="statistics-death__value">1313131</div>
                 </div>
                 <div class="statistics-recover statisitics__parameter">
-                    Выздоровевших:
+                    Recover:
                     <div class="statistic-recover__value">13131313</div>
                 </div>
-                <button class="expand__button">X</button>
+                <button class="expand__button"><i class="fas fa-expand-arrows-alt"></i></button>
             </div>
             <div class="units-change__button">
                 <button class="change__button">Last Day</button>
-                <button class="change__button">Per 1000 men</button>
+
             </div>
             <div class="graph">
 

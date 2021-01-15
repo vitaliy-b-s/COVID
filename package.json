@@ -17,7 +17,9 @@
     "author": "vitaliy <butaji9i54@gmail.com>",
     "license": "ISC",
     "devDependencies": {
+        "@fortawesome/fontawesome-free": "^5.15.2",
         "css-loader": "^5.0.1",
+        "file-loader": "^6.2.0",
         "html-webpack-plugin": "^4.5.1",
         "node-sass": "^5.0.0",
         "sass-loader": "^10.1.1",
@@ -25,5 +27,8 @@
         "webpack": "^5.13.0",
         "webpack-cli": "^4.3.1",
         "webpack-dev-server": "^3.11.1"
+    },
+    "dependencies": {
+        "axios": "^0.21.1"
     }
 }
