@@ -30,6 +30,12 @@ module.exports = {
                     loader: 'file-loader',
                 }, ],
             },
+            {
+                test: /\.json$/,
+                use: [{
+                    loader: 'json-loader',
+                }, ],
+            }
         ]
     },
     devServer: {
