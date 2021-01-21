@@ -157,6 +157,10 @@ body {
 .details {
     display: flex;
     flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    width: 16%;
+    height: 90%;
     .statistics {
         @include block-style;
         position: relative;
@@ -200,9 +204,8 @@ body {
     align-items: center;
     justify-content: space-around;
     margin-top: 5px;
-    .change__button {
-        @include block-style;
-    }
+    width: 50%;
+    @include block-style;
 }
 
 .expand__button {

@@ -27,6 +27,7 @@ function buildPage() {
 
         })
         .then(() => buildCountriesTable(generalData.covid.Countries, listOfCountries))
+        .then(() => initMap(dataByCountries))
 }
 
 function buildCountriesTable(arr, list) {
@@ -61,12 +62,11 @@ function changeOrder() {
 }
 
 function initApp() {
-    buildPage();
+    buildPage()
     document.querySelectorAll('.input').forEach(elem => elem.addEventListener("click", event => {
         cahngeOrderUnits(event);
         changeOrder();
     }))
-    initMap(dataByCountries);
 }
 
 initApp()

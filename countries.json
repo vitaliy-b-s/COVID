@@ -2278,7 +2278,7 @@
              60,
              100
          ],
-         "name": "Russia",
+         "name": "Russian Federation",
          "country_code": "RU",
          "capital": "Moscow"
      },
@@ -2810,7 +2810,7 @@
          "latlng": [
              38, -97
          ],
-         "name": "United States",
+         "name": "United States of America",
          "country_code": "US",
          "capital": "Washington D.C."
      },

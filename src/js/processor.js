@@ -49,7 +49,7 @@ export function convertData() {
                     'lat': lat,
                     'lon': lon
                 })
-
             })
+            console.log(generalData, dataByCountries)
         })
 }
