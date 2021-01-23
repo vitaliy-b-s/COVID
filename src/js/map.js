@@ -1,4 +1,5 @@
 import { dataByCountries } from "./data";
+import { renderSearchResults } from './index.js'
 
 export function initMap(arr) {
     const mapOptions = {
@@ -20,23 +21,27 @@ export function initMap(arr) {
     const customIcon = L.icon(iconOptions);
     arr.forEach((key, value) => {
         const markerDescription =
-            `Country: ${key.country}, \n
-            Population: ${new Intl.NumberFormat('ru-RU').format(key.population)}, 
-            Total confirmed: ${new Intl.NumberFormat('ru-RU').format(key.totalConfirmed)}, 
-            Total deaths: ${new Intl.NumberFormat('ru-RU').format(key.totalDeath)},       
+            `   Country: ${key.Country}, 
+                Population: ${new Intl.NumberFormat('ru-RU').format(key.Population)}, 
+                Total confirmed: ${new Intl.NumberFormat('ru-RU').format(key.TotalConfirmed)}, 
+                Total deaths: ${new Intl.NumberFormat('ru-RU').format(key.TotalDeaths)},       
         `;
         const markerOptions = {
-            title: key.country,
+            title: key.Country,
             clickable: true,
             icon: customIcon
         }
 
-        if (key.lat === "No data") {
+        if (key.Lat === "No data") {
             return
         } else {
-            const marker = L.marker([key.lat, key.lon], markerOptions);
+            const marker = L.marker([key.Lat, key.Lon], markerOptions);
             marker.bindPopup(markerDescription).openPopup();
             marker.addTo(map);
+            marker.addEventListener('click', (event) => {
+                renderSearchResults(event.target.options.title)
+
+            })
         }
 
     })

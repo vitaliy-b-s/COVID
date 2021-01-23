@@ -12,7 +12,7 @@ module.exports = {
         new HTMLWebpackPlugin({
             title: "Test Webpack",
             template: '/src/index.html'
-        }, )
+        }),
     ],
     module: {
         rules: [{
@@ -39,6 +39,11 @@ module.exports = {
         ]
     },
     devServer: {
-        port: 4200
+        port: 8888,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+            "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+        }
     }
 }

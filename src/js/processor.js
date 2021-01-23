@@ -1,5 +1,5 @@
 import { fetchData } from './client.js'
-import { dataByCountries, generalData } from './data.js';
+import { countries, dataByCountries, generalData } from './data.js';
 
 export function sortByNumberOfCases(arr) {
     const sorted = [...arr]
@@ -23,8 +23,8 @@ export function convertData() {
             generalData.covid.Countries.forEach(elem => {
                 let population;
                 let lat;
-                let lon
-
+                let lon;
+                countries.push(elem.Country.toLowerCase());
                 if (generalData.population.find(x => x.name === elem.Country) === undefined) {
                     population = "No data"
                 } else {
@@ -38,18 +38,29 @@ export function convertData() {
                     lon = generalData.coords.find(x => x.name === elem.Country).latlng[1]
                 }
                 dataByCountries.set(elem.Country, {
-                    'country': elem.Country,
-                    'totalConfirmed': elem.TotalConfirmed,
-                    'totalDeath': elem.TotalDeaths,
-                    'totalRecovered': elem.TotalRecovered,
-                    'lastDayConfirmed': elem.NewConfirmed,
-                    'lastDayDeath': elem.NewDeaths,
-                    'lastDayRecovered': elem.NewRecovered,
-                    'population': population,
-                    'lat': lat,
-                    'lon': lon
+                    'Country': elem.Country,
+                    'TotalConfirmed': elem.TotalConfirmed,
+                    'TotalDeaths': elem.TotalDeaths,
+                    'TotalRecovered': elem.TotalRecovered,
+                    'LastDayConfirmed': elem.NewConfirmed,
+                    'LastDayDeath': elem.NewDeaths,
+                    'LastDayRecovered': elem.NewRecovered,
+                    'Population': population,
+                    'Lat': lat,
+                    'Lon': lon,
+                    'TotalConfiremdPerMen': 100000 * elem.TotalConfirmed / population,
+                    'TotalDeathsPerMen': 100000 * elem.TotalDeaths / population,
+                    'TotalRecoveredPerMen': 100000 * elem.TotalRecovered / population
                 })
             })
-            console.log(generalData, dataByCountries)
         })
+}
+
+export function cahngeOrderUnits(event) {
+    generalData.orderParameter = event.target.value
+}
+
+
+export function filterCountriesArray(arr, string) {
+    return arr.filter(elem => elem.includes(string))
 }

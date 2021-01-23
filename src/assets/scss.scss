@@ -199,13 +199,79 @@ body {
 }
 
 .units-change__button {
-    display: flex;
+    display: none;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
     margin-top: 5px;
-    width: 50%;
+    width: 60%;
     @include block-style;
+}
+
+.units-change__button:active,
+.units-change__button:focus {
+    outline: none;
+}
+
+.units-change__button:active {
+    transform: scale(1.1);
+}
+
+.search {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+    border: none;
+    height: 30px;
+    .serach__input-box {
+        display: flex;
+        flex-direction: column;
+        width: 70%;
+        height: 100%;
+        .search__input {
+            width: 100%;
+            height: 100%;
+            @include block-style;
+        }
+        .search__input:focus {
+            outline: none;
+        }
+        .search__possible-variants {
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            color: whitesmoke;
+            top: 30px;
+            list-style-type: none;
+            width: 70%;
+            height: 300px;
+            overflow-y: auto;
+            @include block-style;
+            cursor: pointer;
+            .search__possible-country {
+                @include block-style;
+                width: 100%;
+            }
+            .search__possible-country:hover {
+                background-color: rgb(117, 112, 112);
+            }
+        }
+    }
+    &__button {
+        width: 25%;
+        @include block-style;
+    }
+    &__button:active,
+    &__button:focus {
+        outline: none;
+    }
+    &__button:active {
+        transform: scale(1.1);
+    }
 }
 
 .expand__button {
@@ -215,4 +281,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.show {
+    display: flex;
 }
