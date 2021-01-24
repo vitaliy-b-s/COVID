@@ -24,7 +24,7 @@ export function convertData() {
                 let population;
                 let lat;
                 let lon;
-                countries.push(elem.Country.toLowerCase());
+                countries.push(elem.Country);
                 if (generalData.population.find(x => x.name === elem.Country) === undefined) {
                     population = "No data"
                 } else {
@@ -62,5 +62,5 @@ export function cahngeOrderUnits(event) {
 
 
 export function filterCountriesArray(arr, string) {
-    return arr.filter(elem => elem.includes(string))
+    return arr.filter(elem => elem.toLowerCase().includes(string.toLowerCase()))
 }

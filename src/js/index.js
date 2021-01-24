@@ -6,18 +6,45 @@ import '@fortawesome/fontawesome-free/js/regular'
 import '@fortawesome/fontawesome-free/js/brands'
 import { initMap } from './map.js'
 import { convertData, sortByNumberOfCases, cahngeOrderUnits, filterCountriesArray } from './processor.js'
-import { generalData, dataByCountries, searchedCountry, countries } from "./data.js"
+import { generalData, dataByCountries, searchedCountry, countries, randomCases, labelsForGraph } from "./data.js"
 import { search } from './search.js'
+import { buildGraph } from "./graph.js"
+import Chart from 'chart.js';
+
 
 function buildPage() {
     const listOfCountries = document.querySelector('.countries__list')
     convertData()
         .then(() => {
             renderGlobalCases();
-            renderStatistics(generalData.covid.Global)
+            renderStatistics(generalData.covid.Global);
+            getRandomNumberOfCases(500000, 600000);
+            getDatesArray(new Date('December 15, 2020'), new Date('December 29, 2020'))
+            console.log(labelsForGraph)
+            buildGraph();
         })
         .then(() => renderCountriesTable(generalData.covid.Countries, listOfCountries))
         .then(() => initMap(dataByCountries))
+}
+
+function getRandomNumberOfCases(min, max) {
+    for (let i = 0; i < 15; i++) {
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        randomCases.push(Math.round(rand));
+    }
+}
+
+function getDatesArray(startDate, stopDate) {
+    Date.prototype.addDays = function(days) {
+        const date = new Date(this.valueOf());
+        date.setDate(date.getDate() + days);
+        return date;
+    }
+    let currentDate = startDate;
+    while (currentDate <= stopDate) {
+        labelsForGraph.push(`${currentDate.getDate()}.${currentDate.getMonth()}.${currentDate.getFullYear()}`);
+        currentDate = currentDate.addDays(1);
+    }
 }
 
 function renderGlobalCases() {
@@ -124,8 +151,20 @@ function showPossibleSearchedCountries(array) {
         li.className = "search__possible-country"
         li.innerHTML = element
 
+        li.addEventListener("click", (event) => {
+            document.querySelector('.search__input').value = event.target.innerHTML
+            list.innerHTML = ""
+            renderSearchResults(event.target.innerHTML)
+        })
+
         list.appendChild(li)
     })
+}
+
+function expandElement(event) {
+    const elem = event.target.parentNode;
+    elem.classList.toggle("expand")
+
 }
 
 function initApp() {
@@ -140,8 +179,8 @@ function initApp() {
     document.querySelector('.units-change__button').addEventListener('click', () => {
         changeStatisticsUnits()
     })
-    document.querySelector('.search__input').addEventListener('keydown', () => {
-        showPossibleSearchedCountries(countries)
+    document.querySelector('.search__input').addEventListener('keyup', () => {
+        showPossibleSearchedCountries(filterCountriesArray(countries, document.querySelector('.search__input').value))
     })
 }
 
