@@ -1,3 +1,4 @@
+// не используемый импорт
 import { dataByCountries } from "./data";
 import { renderSearchResults } from './index.js'
 
@@ -7,6 +8,7 @@ export function initMap(arr) {
         zoom: 2
     }
     const map = new L.map('map', mapOptions);
+    // вынести урл в константу
     const layer = new L.TileLayer('https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=59a66f1f84374967b29c9edc3526fdaf', {
         noWrap: true
     });

@@ -1,25 +1,48 @@
+// Лишние импорты
 import { style } from "/src/assets/style.css"
 import { scss } from "/src/assets/scss.scss"
 import '@fortawesome/fontawesome-free/js/fontawesome'
 import '@fortawesome/fontawesome-free/js/solid'
 import '@fortawesome/fontawesome-free/js/regular'
 import '@fortawesome/fontawesome-free/js/brands'
+// Не обязательно писать полные имена файлов
+// можно написать просто 
+// import { initMap } from 'map'. Поменять везде
 import { initMap } from './map.js'
-import { convertData, sortByNumberOfCases, cahngeOrderUnits, filterCountriesArray } from './processor.js'
+import { convertData, sortByNumberOfCases, cahngeOrderUnits, filterCountriesArray } from 'processor'
 import { generalData, dataByCountries, searchedCountry, countries, randomCases, labelsForGraph } from "./data.js"
 import { search } from './search.js'
 import { buildGraph } from "./graph.js"
+// Лишний импорт
 import Chart from 'chart.js';
 
 
 function buildPage() {
     const listOfCountries = document.querySelector('.countries__list')
+    // converData - функция, которая находится в модуле processor.js
+    // В модуле processor.js используется модуль client.js. В итоге все написано так, как будто
+    // клиент - это часть процессора? Это неправильно. Процессинг данных - это самостоятельная операция
+    // которая должна выполнять функцию, соответствующую своему названию - процессить переданные ей данные
+    // И почему у тебя прилага начинается с функции convertData, которая даже не получает ничего аргументом?
+    // это странная логика. Если у тебя есть клиент и процессор, то в моем представлении это должно выглядеть так:
+    // fetchData()
+    //    .then(data => convertData(data))
+    //    .then(...)
+    //
+    // Можно вынести всю эту логику в отдельный модуль, это тоже нормально. Но тогда функция должна называться 
+    // не convertData, а collectData или provideData, а сам модуль - не процессором должен быть, а провайдером или коллектором
     convertData()
+        // Этот блок в первом then тоже лучше вынести в отдельную функцию
         .then(() => {
+            // Почему одна функция не получает аргументов и вытаскивает их сама, а вторая получает аргумент?
             renderGlobalCases();
             renderStatistics(generalData.covid.Global);
+            // Почему функция со словом get в названии ничего не возвращает, а вместо этого заполняет какой-то левый 
+            // объект из другого модуля?
             getRandomNumberOfCases(500000, 600000);
+            // аналогично
             getDatesArray(new Date('December 15, 2020'), new Date('December 29, 2020'))
+            // забыл убрать лог
             console.log(labelsForGraph)
             buildGraph();
         })
@@ -35,6 +58,8 @@ function getRandomNumberOfCases(min, max) {
 }
 
 function getDatesArray(startDate, stopDate) {
+    // не уверен, что это хорошая практика и нельзя сделать это без изменения прототипа
+    // но в целом прикольное решение, пусть остается
     Date.prototype.addDays = function(days) {
         const date = new Date(this.valueOf());
         date.setDate(date.getDate() + days);
@@ -53,6 +78,7 @@ function renderGlobalCases() {
         new Intl.NumberFormat('ru-RU').format(generalData.covid.Global.TotalConfirmed)
 }
 
+// Всегда давай аргументам функции осмысленные названия - что такое obj?
 function renderStatistics(obj) {
     const totalCases = document.querySelector('.statistics-case__value')
     const totalDeath = document.querySelector('.statistics-death__value')
@@ -66,6 +92,8 @@ function renderStatistics(obj) {
         new Intl.NumberFormat('ru-RU').format(obj.TotalRecovered)
 }
 
+// аналогично предыдущей функции, только еще хуже
+// arr и list - блестящие названия аргументов, хрен пойми в каком что, правда
 function renderCountriesTable(arr, list) {
     list.innerHTML = ""
     arr.forEach(elem => {
@@ -161,6 +189,7 @@ function showPossibleSearchedCountries(array) {
     })
 }
 
+// не используемая функция
 function expandElement(event) {
     const elem = event.target.parentNode;
     elem.classList.toggle("expand")

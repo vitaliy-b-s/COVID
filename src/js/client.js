@@ -1,6 +1,6 @@
 import { generalData } from './data'
 
-
+// Не смешивай improt и require. require - вроде как устаревший синтаксис
 const axios = require('axios');
 
 const COVID_API_URL = 'https://api.covid19api.com/summary'

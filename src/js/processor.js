@@ -1,6 +1,7 @@
 import { fetchData } from './client.js'
 import { countries, dataByCountries, generalData } from './data.js';
 
+// Не уверен, что за сортировку должен отвечать процессор
 export function sortByNumberOfCases(arr) {
     const sorted = [...arr]
 
@@ -20,11 +21,16 @@ export function sortByNumberOfCases(arr) {
 export function convertData() {
     return fetchData()
         .then(() => {
+            // Мне не нравится этот блок кода. Вынеси его в отдельную функцию
+            // В целом, лучше внутри .then(() => ...) не писать много кода, эта часть c then нужна, чтобы описать
+            // последовательность действий, поэтому намного приятнее читать, когда не такая простыня, а что-то типа
+            // .then(() => someMeaningfulFunctionName())
             generalData.covid.Countries.forEach(elem => {
                 let population;
                 let lat;
                 let lon;
                 countries.push(elem.Country);
+                // можно использовать truthy и falsy и не делать явно сравнение с undefined
                 if (generalData.population.find(x => x.name === elem.Country) === undefined) {
                     population = "No data"
                 } else {
@@ -56,11 +62,14 @@ export function convertData() {
         })
 }
 
+// А ты уверен, что модуль с названием processor должен отвечать за смену единиц измерения?
 export function cahngeOrderUnits(event) {
     generalData.orderParameter = event.target.value
 }
 
-
+// Лучше не использовать в именах функций слово array. Зачем оно тут? Само слово countries во множественном
+// числе говорит о том, что будешь рабоать с массивом. 
+// Имя аргумента - string - это тоже никуда не годится? string это тип данных, а не осмысленное название аргумента
 export function filterCountriesArray(arr, string) {
     return arr.filter(elem => elem.toLowerCase().includes(string.toLowerCase()))
 }
