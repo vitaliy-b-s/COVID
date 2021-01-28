@@ -5,107 +5,140 @@ import "@fortawesome/fontawesome-free/js/solid";
 import "@fortawesome/fontawesome-free/js/regular";
 import "@fortawesome/fontawesome-free/js/brands";
 import { collectCovidData } from "./client";
-import { event } from "jquery";
 
 function buildApp() {
-    collectCovidData()
-        .then(data => {
-            buildGlobalСasesBlock(data);
-            buildCountriesTable(data.data.Countries);
-            addListenerToUnitButtons(data)
-            buildStatisticsTable(data);
-            addListenerToSearchButton(data)
-        })
+  collectCovidData().then(data => {
+    buildGlobalСasesBlock(data.data.Global);
+    buildCountriesTable(data.data.Countries);
+    buildStatisticsTable(data.data.Global);
+
+    addListenerToUnitButtons(data.data.Countries);
+    addListenerToSearchButton(data.data.Countries);
+    addListenerToSearchInut(data.data.Countries);
+  });
 }
 
 function buildGlobalСasesBlock(covidData) {
-    const globalCases = document.querySelector(".total__value");
-    globalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(
-        covidData.data.Global.TotalConfirmed
-    );
+  const globalCases = document.querySelector(".total__value");
+  globalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(
+    covidData.TotalConfirmed
+  );
 }
 
-function buildCountriesTable(covidData) {
-    const list = document.querySelector('.countries__list')
-    list.innerHTML = "";
+function buildCountriesTable(covidDataByCountries) {
+  const list = document.querySelector(".countries__list");
+  list.innerHTML = "";
 
-    covidData.forEach(element => {
-        const li = document.createElement("li");
-        const country = document.createElement("div");
-        const value = document.createElement("div");
+  covidDataByCountries.forEach(element => {
+    const li = document.createElement("li");
+    const country = document.createElement("div");
+    const value = document.createElement("div");
 
-        li.className = "country";
-        country.className = "country__name";
-        value.className = "country__cases_value";
+    li.className = "country";
+    country.className = "country__name";
+    value.className = "country__cases_value";
 
-        country.innerHTML = element.Country;
-        value.innerHTML = new Intl.NumberFormat("ru-RU").format(
-            element.TotalConfirmed
-        );
+    country.innerHTML = element.Country;
+    value.innerHTML = new Intl.NumberFormat("ru-RU").format(
+      element.TotalConfirmed
+    );
 
-        li.appendChild(value);
-        li.appendChild(country);
-        list.appendChild(li);
+    li.appendChild(value);
+    li.appendChild(country);
+    list.appendChild(li);
+  });
+}
 
+function addListenerToUnitButtons(covidDataByCountries) {
+  document.querySelectorAll(".input").forEach(elem =>
+    elem.addEventListener("click", event => {
+      if (event.target.value === "byCountryName") {
+        buildCountriesTable(covidDataByCountries);
+      } else {
+        buildCountriesTable(sortByNumberOfCases(covidDataByCountries));
+      }
     })
-}
-
-function addListenerToUnitButtons(covidData) {
-    document.querySelectorAll(".input").forEach(elem =>
-        elem.addEventListener("click", (event) => {
-            if (event.target.value === "byCountryName") {
-                buildCountriesTable(covidData.data.Countries)
-            } else {
-                buildCountriesTable(sortByNumberOfCases(covidData.data.Countries))
-            }
-        })
-    );
+  );
 }
 
 function buildStatisticsTable(covidData) {
-    const totalCases = document.querySelector(".statistics-case__value");
-    const totalDeath = document.querySelector(".statistics-death__value");
-    const totalRecovered = document.querySelector(".statistic-recover__value");
+  const totalCases = document.querySelector(".statistics-case__value");
+  const totalDeath = document.querySelector(".statistics-death__value");
+  const totalRecovered = document.querySelector(".statistic-recover__value");
 
-    totalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(
-        covidData.data.Global.TotalConfirmed
-    );
-    totalDeath.innerHTML = new Intl.NumberFormat("ru-RU").format(covidData.data.Global.TotalDeaths);
-    totalRecovered.innerHTML = new Intl.NumberFormat("ru-RU").format(
-        covidData.data.Global.TotalRecovered
-    );
-
+  totalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(
+    covidData.TotalConfirmed
+  );
+  totalDeath.innerHTML = new Intl.NumberFormat("ru-RU").format(
+    covidData.TotalDeaths
+  );
+  totalRecovered.innerHTML = new Intl.NumberFormat("ru-RU").format(
+    covidData.TotalRecovered
+  );
 }
 
 function addListenerToSearchButton(covidData) {
+  const searhedCountry = document.querySelector(".search__input").value;
+  const statisticsTitle = document.querySelector(".statistics__title");
 
-    document.querySelector(".search__button").addEventListener("click", () => {
-        const searhedCountry = document.querySelector('.search__input').value;
-        for (let key of covidData.data.Countries) {
-            if (key.Country.toLowerCase() === searhedCountry.toLowerCase()) {
-                console.log(key)
-                break
-            }
-        }
+  document.querySelector(".search__button").addEventListener("click", () => {
+    for (const key of covidData) {
+      if (key.Country.toLowerCase() === searhedCountry.toLowerCase()) {
+        statisticsTitle.innerHTML = key.Country;
+        buildStatisticsTable(key);
+        break;
+      }
+    }
+  });
+}
 
-    });
+function addListenerToSearchInut(covidDataByCountries) {
+  document.querySelector(".search__input").addEventListener("keyup", () => {
+    renderPossibleSearchVariants(filterCountriesArray(covidDataByCountries));
+  });
+}
+
+function renderPossibleSearchVariants(filteredArray) {
+  const possibleCountriesList = document.querySelector(
+    ".search__possible-variants"
+  );
+  possibleCountriesList.innerHTML = "";
+  possibleCountriesList.style = "display: block;";
+  filteredArray.forEach(elem => {
+    const li = document.createElement("li");
+    li.className = "search__possible-country";
+    li.innerHTML = elem;
+    possibleCountriesList.appendChild(li);
+  });
+}
+
+function filterCountriesArray(covidDataByCountries) {
+  const filteredArray = [];
+  const searchedCountry = document.querySelector(".search__input").value;
+
+  for (const key of covidDataByCountries) {
+    if (key.Country.toLowerCase().includes(searchedCountry)) {
+      filteredArray.push(key.Country);
+    }
+  }
+
+  return filteredArray;
 }
 
 function sortByNumberOfCases(covidData) {
-    const sorted = [...covidData]
+  const sorted = [...covidData];
 
-    function compare(a, b) {
-        if (a.TotalConfirmed < b.TotalConfirmed) {
-            return -1;
-        }
-        if (a.TotalConfirmed > b.TotalConfirmed) {
-            return 1;
-        }
-        return 0;
+  function compare(a, b) {
+    if (a.TotalConfirmed < b.TotalConfirmed) {
+      return -1;
     }
+    if (a.TotalConfirmed > b.TotalConfirmed) {
+      return 1;
+    }
+    return 0;
+  }
 
-    return sorted.sort(compare).reverse();
-
+  return sorted.sort(compare).reverse();
 }
 
 // function buildPage() {
@@ -294,26 +327,25 @@ function sortByNumberOfCases(covidData) {
 //   });
 // }
 
-
 function initApp() {
-    buildApp();
+  buildApp();
 
-    // document.querySelector(".search__button").addEventListener("click", () => {
-    //   renderSearchResults(document.querySelector(".search__input").value);
-    // });
-    // document
-    //   .querySelector(".units-change__button")
-    //   .addEventListener("click", () => {
-    //     changeStatisticsUnits();
-    //   });
-    // document.querySelector(".search__input").addEventListener("keyup", () => {
-    //   showPossibleSearchedCountries(
-    //     filterCountriesArray(
-    //       countries,
-    //       document.querySelector(".search__input").value
-    //     )
-    //   );
-    // });
+  // document.querySelector(".search__button").addEventListener("click", () => {
+  //   renderSearchResults(document.querySelector(".search__input").value);
+  // });
+  // document
+  //   .querySelector(".units-change__button")
+  //   .addEventListener("click", () => {
+  //     changeStatisticsUnits();
+  //   });
+  // document.querySelector(".search__input").addEventListener("keyup", () => {
+  //   showPossibleSearchedCountries(
+  //     filterCountriesArray(
+  //       countries,
+  //       document.querySelector(".search__input").value
+  //     )
+  //   );
+  // });
 }
 
 initApp();
