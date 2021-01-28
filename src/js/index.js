@@ -78,10 +78,9 @@ function buildStatisticsTable(covidData) {
 }
 
 function addListenerToSearchButton(covidData) {
-  const searhedCountry = document.querySelector(".search__input").value;
-  const statisticsTitle = document.querySelector(".statistics__title");
-
   document.querySelector(".search__button").addEventListener("click", () => {
+    const searhedCountry = document.querySelector(".search__input").value;
+    const statisticsTitle = document.querySelector(".statistics__title");
     for (const key of covidData) {
       if (key.Country.toLowerCase() === searhedCountry.toLowerCase()) {
         statisticsTitle.innerHTML = key.Country;
@@ -107,6 +106,9 @@ function renderPossibleSearchVariants(filteredArray) {
   filteredArray.forEach(elem => {
     const li = document.createElement("li");
     li.className = "search__possible-country";
+    li.addEventListener("click", () => {
+      hidePossibleCountriesList();
+    });
     li.innerHTML = elem;
     possibleCountriesList.appendChild(li);
   });
