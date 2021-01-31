@@ -4,17 +4,19 @@ import "@fortawesome/fontawesome-free/js/fontawesome";
 import "@fortawesome/fontawesome-free/js/solid";
 import "@fortawesome/fontawesome-free/js/regular";
 import "@fortawesome/fontawesome-free/js/brands";
-import { collectCovidData } from "./client";
+import { collectData } from "./client";
 
 function buildApp() {
-  collectCovidData().then(data => {
-    buildGlobalСasesBlock(data.data.Global);
-    buildCountriesTable(data.data.Countries);
-    buildStatisticsTable(data.data.Global);
+  collectData().then(data => {
+    buildGlobalСasesBlock(data[0].data.Global);
+    buildCountriesTable(data[0].data.Countries);
+    buildStatisticsTable(data[0].data.Global);
 
-    addListenerToUnitButtons(data.data.Countries);
-    addListenerToSearchButton(data.data.Countries);
-    addListenerToSearchInut(data.data.Countries);
+    addListenerToUnitButtons(data[0].data.Countries);
+    addListenerToSearchInut(data[0].data.Countries);
+    addListenerToSearchButton(data[0].data.Countries);
+    addListenerToUnitButtons(data[0].data.Countries, data[1])
+    
   });
 }
 
@@ -49,18 +51,6 @@ function buildCountriesTable(covidDataByCountries) {
   });
 }
 
-function addListenerToUnitButtons(covidDataByCountries) {
-  document.querySelectorAll(".input").forEach(elem =>
-    elem.addEventListener("click", event => {
-      if (event.target.value === "byCountryName") {
-        buildCountriesTable(covidDataByCountries);
-      } else {
-        buildCountriesTable(sortByNumberOfCases(covidDataByCountries));
-      }
-    })
-  );
-}
-
 function buildStatisticsTable(covidData) {
   const totalCases = document.querySelector(".statistics-case__value");
   const totalDeath = document.querySelector(".statistics-death__value");
@@ -77,24 +67,43 @@ function buildStatisticsTable(covidData) {
   );
 }
 
+function addListenerToUnitButtons(covidDataByCountries) {
+  document.querySelectorAll(".input").forEach(elem =>
+    elem.addEventListener("click", event => {
+      if (event.target.value === "byCountryName") {
+        buildCountriesTable(covidDataByCountries);
+      } else {
+        buildCountriesTable(sortByNumberOfCases(covidDataByCountries));
+      }
+    })
+  );
+}
+
 function addListenerToSearchButton(covidData) {
   document.querySelector(".search__button").addEventListener("click", () => {
     const searhedCountry = document.querySelector(".search__input").value;
     const statisticsTitle = document.querySelector(".statistics__title");
+    
     for (const key of covidData) {
       if (key.Country.toLowerCase() === searhedCountry.toLowerCase()) {
         statisticsTitle.innerHTML = key.Country;
         buildStatisticsTable(key);
+        showButton(document.querySelector('.units-change__button'))
         break;
       }
     }
   });
 }
 
+function showButton(button) {
+  button.style = "display: flex"
+}
+
 function addListenerToSearchInut(covidDataByCountries) {
   document.querySelector(".search__input").addEventListener("keyup", () => {
     renderPossibleSearchVariants(filterCountriesArray(covidDataByCountries));
   });
+ 
 }
 
 function renderPossibleSearchVariants(filteredArray) {
@@ -106,12 +115,17 @@ function renderPossibleSearchVariants(filteredArray) {
   filteredArray.forEach(elem => {
     const li = document.createElement("li");
     li.className = "search__possible-country";
-    li.addEventListener("click", () => {
-      hidePossibleCountriesList();
-    });
+    li.addEventListener('click', event => {
+      setSearchedCountry(event);
+    })
     li.innerHTML = elem;
     possibleCountriesList.appendChild(li);
   });
+}
+
+function setSearchedCountry(event) {
+  document.querySelector('.search__input').value = event.target.innerHTML
+  document.querySelector(".search__possible-variants").style = "display: none"
 }
 
 function filterCountriesArray(covidDataByCountries) {
