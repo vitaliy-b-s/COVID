@@ -1,3 +1,5 @@
+import { buildStatisticsTable } from "./index";
+
 export function initMap(covidData, populationData, geoData) {
   const mapOptions = {
     center: [0.0, 0.0],
@@ -12,38 +14,52 @@ export function initMap(covidData, populationData, geoData) {
   });
   map.addLayer(layer);
 
-  const iconOptions = {
-    iconUrl: "src/assets/img/icon.png",
-    iconSize: [10, 10],
-  };
+  covidData.forEach(elem => {
+    const geo = geoData.find(x => x.name === elem.Country);
+    const population = populationData.find(x => x.name === elem.Country);
 
-  const customIcon = L.icon(iconOptions);
-  arr.forEach((key, value) => {
-    const markerDescription = `   Country: ${key.Country}, 
+    if (geo === undefined || population === undefined) {
+      return;
+    }
+
+    let maxSize;
+    let size;
+
+    const iconOptions = {
+      iconUrl: "src/assets/img/marker.png",
+      iconSize: [size, size],
+    };
+
+    const customIcon = L.icon(iconOptions);
+
+    const markerDescription = `   Country: ${elem.Country},
                 Population: ${new Intl.NumberFormat("ru-RU").format(
-                  key.Population
-                )}, 
+                  population.population
+                )},
                 Total confirmed: ${new Intl.NumberFormat("ru-RU").format(
-                  key.TotalConfirmed
-                )}, 
-                Total deaths: ${new Intl.NumberFormat("ru-RU").format(
-                  key.TotalDeaths
-                )},       
+                  elem.TotalConfirmed
+                )},
+                Total deaths: ${new Intl.NumberFormat("ru-RU").format(elem.TotalDeaths)},
         `;
+
     const markerOptions = {
-      title: key.Country,
+      title: elem.Country,
       clickable: true,
       icon: customIcon,
     };
 
-    if (key.Lat === "No data") {
+    if (geo.latlng === false) {
       return;
     } else {
-      const marker = L.marker([key.Lat, key.Lon], markerOptions);
+      const marker = L.marker(geo.latlng, markerOptions);
       marker.bindPopup(markerDescription).openPopup();
       marker.addTo(map);
       marker.addEventListener("click", event => {
-        renderSearchResults(event.target.options.title);
+        const country = covidData.find(x => x.Country === event.target.options.title);
+        document.querySelector(".statistics__title").innerHTML =
+          event.target.options.title;
+        document.querySelector(".units-change__button").style = "display: flex";
+        buildStatisticsTable(country);
       });
     }
   });

@@ -5,26 +5,27 @@ import "@fortawesome/fontawesome-free/js/solid";
 import "@fortawesome/fontawesome-free/js/regular";
 import "@fortawesome/fontawesome-free/js/brands";
 import { collectData } from "./client";
+import { initMap } from "./map";
+import { buildGraph } from "./graph";
 
 function buildApp() {
   collectData().then(data => {
     buildGlobalСasesBlock(data[0].data.Global);
     buildCountriesTable(data[0].data.Countries);
     buildStatisticsTable(data[0].data.Global);
-    // initMap(data.Countries, data[1], data[2]);
+    initMap(data[0].data.Countries, data[1].data, data[2].data);
+    buildGraph();
 
     addListenerToUnitButtons(data[0].data.Countries);
     addListenerToSearchInut(data[0].data.Countries);
     addListenerToSearchButton(data[0].data.Countries);
-    addListenerToPerMenButton(data[0].data.Countries, data[1]);
+    addListenerToPerMenButton(data[0].data.Countries, data[1].data);
   });
 }
 
 function buildGlobalСasesBlock(covidData) {
   const globalCases = document.querySelector(".total__value");
-  globalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(
-    covidData.TotalConfirmed
-  );
+  globalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(covidData.TotalConfirmed);
 }
 
 function buildCountriesTable(covidDataByCountries) {
@@ -41,9 +42,7 @@ function buildCountriesTable(covidDataByCountries) {
     value.className = "country__cases_value";
 
     country.innerHTML = element.Country;
-    value.innerHTML = new Intl.NumberFormat("ru-RU").format(
-      element.TotalConfirmed
-    );
+    value.innerHTML = new Intl.NumberFormat("ru-RU").format(element.TotalConfirmed);
 
     li.appendChild(value);
     li.appendChild(country);
@@ -51,17 +50,13 @@ function buildCountriesTable(covidDataByCountries) {
   });
 }
 
-function buildStatisticsTable(covidData) {
+export function buildStatisticsTable(covidData) {
   const totalCases = document.querySelector(".statistics-case__value");
   const totalDeath = document.querySelector(".statistics-death__value");
   const totalRecovered = document.querySelector(".statistic-recover__value");
 
-  totalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(
-    covidData.TotalConfirmed
-  );
-  totalDeath.innerHTML = new Intl.NumberFormat("ru-RU").format(
-    covidData.TotalDeaths
-  );
+  totalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(covidData.TotalConfirmed);
+  totalDeath.innerHTML = new Intl.NumberFormat("ru-RU").format(covidData.TotalDeaths);
   totalRecovered.innerHTML = new Intl.NumberFormat("ru-RU").format(
     covidData.TotalRecovered
   );
@@ -83,6 +78,7 @@ function addListenerToSearchButton(covidData) {
   document.querySelector(".search__button").addEventListener("click", () => {
     const searhedCountry = document.querySelector(".search__input").value;
     const statisticsTitle = document.querySelector(".statistics__title");
+    document.querySelector(".search__possible-variants").style = "display: none";
 
     for (const key of covidData) {
       if (key.Country.toLowerCase() === searhedCountry.toLowerCase()) {
@@ -106,9 +102,7 @@ function addListenerToSearchInut(covidDataByCountries) {
 }
 
 function renderPossibleSearchVariants(filteredArray) {
-  const possibleCountriesList = document.querySelector(
-    ".search__possible-variants"
-  );
+  const possibleCountriesList = document.querySelector(".search__possible-variants");
   possibleCountriesList.innerHTML = "";
   possibleCountriesList.style = "display: block;";
   filteredArray.forEach(elem => {
@@ -138,6 +132,50 @@ function filterCountriesArray(covidDataByCountries) {
   }
 
   return filteredArray;
+}
+
+function addListenerToPerMenButton(covidData, population) {
+  const unit = document.querySelector(".units-change__button");
+  unit.addEventListener("click", () => {
+    changeStatisticsUnits(covidData, population);
+  });
+}
+
+function changeStatisticsUnits(covidData, population) {
+  const country = document.querySelector(".statistics__title").innerHTML;
+  const changeButton = document.querySelector(".units-change__button");
+
+  const totalCasesPerMen =
+    (100000 * covidData.find(x => x.Country === country).TotalConfirmed) /
+    population.find(x => x.name === country).population;
+
+  const totalDeathPerMen =
+    (100000 * covidData.find(x => x.Country === country).TotalDeaths) /
+    population.find(x => x.name === country).population;
+
+  const totalRecoveredPerMen =
+    (100000 * covidData.find(x => x.Country === country).TotalRecovered) /
+    population.find(x => x.name === country).population;
+
+  if (changeButton.value === "Total") {
+    buildStatisticsTable(covidData.find(x => x.Country === country));
+
+    changeButton.innerHTML = "Per 100 000 men";
+    changeButton.value = "Per 100 000 men";
+  } else {
+    const totalCases = document.querySelector(".statistics-case__value");
+    const totalDeath = document.querySelector(".statistics-death__value");
+    const totalRecovered = document.querySelector(".statistic-recover__value");
+
+    totalCases.innerHTML = new Intl.NumberFormat("ru-RU").format(totalCasesPerMen);
+    totalDeath.innerHTML = new Intl.NumberFormat("ru-RU").format(totalDeathPerMen);
+    totalRecovered.innerHTML = new Intl.NumberFormat("ru-RU").format(
+      totalRecoveredPerMen
+    );
+
+    changeButton.innerHTML = "Total";
+    changeButton.value = "Total";
+  }
 }
 
 function sortByNumberOfCases(covidData) {
@@ -192,30 +230,6 @@ function sortByNumberOfCases(covidData) {
 //       renderCountriesTable(generalData.covid.Countries, listOfCountries)
 //     )
 //     .then(() => initMap(dataByCountries));
-// }
-
-// function getRandomNumberOfCases(min, max) {
-//   for (let i = 0; i < 15; i++) {
-//     let rand = min - 0.5 + Math.random() * (max - min + 1);
-//     randomCases.push(Math.round(rand));
-//   }
-// }
-
-// function getDatesArray(startDate, stopDate) {
-//   // не уверен, что это хорошая практика и нельзя сделать это без изменения прототипа
-//   // но в целом прикольное решение, пусть остается
-//   Date.prototype.addDays = function (days) {
-//     const date = new Date(this.valueOf());
-//     date.setDate(date.getDate() + days);
-//     return date;
-//   };
-//   let currentDate = startDate;
-//   while (currentDate <= stopDate) {
-//     labelsForGraph.push(
-//       `${currentDate.getDate()}.${currentDate.getMonth()}.${currentDate.getFullYear()}`
-//     );
-//     currentDate = currentDate.addDays(1);
-//   }
 // }
 
 // function renderGlobalCases() {
