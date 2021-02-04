@@ -1,4 +1,4 @@
-import { buildStatisticsTable } from "./index";
+import { buildStatisticsTable, sortByNumberOfCases } from "./index";
 
 export function initMap(covidData, populationData, geoData) {
   const mapOptions = {
@@ -22,12 +22,22 @@ export function initMap(covidData, populationData, geoData) {
       return;
     }
 
-    let maxSize;
-    let size;
+    const sortedCasesArray = sortByNumberOfCases(covidData);
+
+    const maxSize = 60;
+    const minSize = 10;
+
+    const maxCases = sortedCasesArray[0].TotalConfirmed;
+    const minCases =
+      sortedCasesArray[sortedCasesArray.length - 1].TotalConfirmed;
+
+    const step = Math.trunc((maxCases - minCases) / (maxSize - minSize));
+    const calculatedSize = Math.trunc(elem.TotalConfirmed / step);
+    const result = minSize + calculatedSize;
 
     const iconOptions = {
       iconUrl: "src/assets/img/marker.png",
-      iconSize: [size, size],
+      iconSize: [result, result],
     };
 
     const customIcon = L.icon(iconOptions);
@@ -39,7 +49,9 @@ export function initMap(covidData, populationData, geoData) {
                 Total confirmed: ${new Intl.NumberFormat("ru-RU").format(
                   elem.TotalConfirmed
                 )},
-                Total deaths: ${new Intl.NumberFormat("ru-RU").format(elem.TotalDeaths)},
+                Total deaths: ${new Intl.NumberFormat("ru-RU").format(
+                  elem.TotalDeaths
+                )},
         `;
 
     const markerOptions = {
@@ -55,7 +67,9 @@ export function initMap(covidData, populationData, geoData) {
       marker.bindPopup(markerDescription).openPopup();
       marker.addTo(map);
       marker.addEventListener("click", event => {
-        const country = covidData.find(x => x.Country === event.target.options.title);
+        const country = covidData.find(
+          x => x.Country === event.target.options.title
+        );
         document.querySelector(".statistics__title").innerHTML =
           event.target.options.title;
         document.querySelector(".units-change__button").style = "display: flex";
