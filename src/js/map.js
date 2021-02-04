@@ -1,4 +1,8 @@
-import { buildStatisticsTable, sortByNumberOfCases } from "./index";
+import { sortByNumberOfCases, buildStatisticsTable } from "./util";
+const MAP_LAYER =
+  "https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=59a66f1f84374967b29c9edc3526fdaf";
+const maxSize = 60;
+const minSize = 10;
 
 export function initMap(covidData, populationData, geoData) {
   const mapOptions = {
@@ -7,11 +11,11 @@ export function initMap(covidData, populationData, geoData) {
     minZoom: 2,
   };
   const map = new L.map("map", mapOptions);
-  const MAP_LAYER =
-    "https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=59a66f1f84374967b29c9edc3526fdaf";
   const layer = new L.TileLayer(MAP_LAYER, {
     noWrap: true,
   });
+  const sortedCasesArray = sortByNumberOfCases(covidData);
+
   map.addLayer(layer);
 
   covidData.forEach(elem => {
@@ -22,22 +26,11 @@ export function initMap(covidData, populationData, geoData) {
       return;
     }
 
-    const sortedCasesArray = sortByNumberOfCases(covidData);
-
-    const maxSize = 60;
-    const minSize = 10;
-
-    const maxCases = sortedCasesArray[0].TotalConfirmed;
-    const minCases =
-      sortedCasesArray[sortedCasesArray.length - 1].TotalConfirmed;
-
-    const step = Math.trunc((maxCases - minCases) / (maxSize - minSize));
-    const calculatedSize = Math.trunc(elem.TotalConfirmed / step);
-    const result = minSize + calculatedSize;
+    const calculatedSize = calculateSizeOfmarker(elem, sortedCasesArray);
 
     const iconOptions = {
       iconUrl: "src/assets/img/marker.png",
-      iconSize: [result, result],
+      iconSize: [calculatedSize, calculatedSize],
     };
 
     const customIcon = L.icon(iconOptions);
@@ -77,4 +70,14 @@ export function initMap(covidData, populationData, geoData) {
       });
     }
   });
+}
+
+function calculateSizeOfmarker(covidData, sortedArray) {
+  const maxCases = sortedArray[0].TotalConfirmed;
+  const minCases = sortedArray[sortedArray.length - 1].TotalConfirmed;
+  const step = Math.trunc((maxCases - minCases) / (maxSize - minSize));
+  const extraSize = Math.trunc(covidData.TotalConfirmed / step);
+  const calculatedSize = minSize + extraSize;
+
+  return calculatedSize;
 }
