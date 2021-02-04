@@ -1,32 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Covid dashboard</title>
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-</head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  </head>
 
-<body>
+  <body>
     <div class="app">
-        <div class="cases">
-            <div class="total">
-                <div class="total__title">Global Cases</div>
-                <div class="total__value">80 000 000</div>
-            </div>
-            <div class="countries">
-                <div class="countries__title">Cases by
-                    <form class="sort-form">
-                        <input type="radio" name="sort" value="byCountryName" id="byCountryName" checked class="input">
-                        <label for="byCountryName" class="input-label">By Country</label>
-                        <input type="radio" name="sort" value="byNumberOfCases" id="byNumberOfCases" class="input">
-                        <label for="byNumberOfCases" class="input-label">By Number</label>
-                    </form>
-                </div>
-                <ul class="countries__list">
-                    <!-- <li class="country">
+      <div class="cases">
+        <div class="total">
+          <div class="total__title">Global Cases</div>
+          <div class="total__value">80 000 000</div>
+        </div>
+        <div class="countries">
+          <div class="countries__title">
+            Cases by
+            <form class="sort-form">
+              <input
+                type="radio"
+                name="sort"
+                value="byCountryName"
+                id="byCountryName"
+                checked
+                class="input"
+              />
+              <label for="byCountryName" class="input-label">By Country</label>
+              <input
+                type="radio"
+                name="sort"
+                value="byNumberOfCases"
+                id="byNumberOfCases"
+                class="input"
+              />
+              <label for="byNumberOfCases" class="input-label">By Number</label>
+            </form>
+          </div>
+          <ul class="countries__list">
+            <!-- <li class="country">
                         <div class="country__cases_value">1 000 000</div>
                         <div class="country__name">Belarus</div>
                     </li>
@@ -46,48 +59,43 @@
                         <div class="country__cases_value">13131 1313</div>
                         <div class="country__name">Germany</div>
                     </li> -->
-                </ul>
-            </div>
+          </ul>
         </div>
-        <div class="map" id="map">
+      </div>
+      <div class="map" id="map"></div>
+      <div class="details">
+        <div class="statistics">
+          <div class="statistics__title">In The Whole World</div>
+          <div class="statistics-case statisitics__parameter">
+            Cases:
+            <div class="statistics-case__value">313131131</div>
+          </div>
+          <div class="statistics-death statisitics__parameter">
+            Deaths:
+            <div class="statistics-death__value">1313131</div>
+          </div>
+          <div class="statistics-recover statisitics__parameter">
+            Recovered:
+            <div class="statistic-recover__value">13131313</div>
+          </div>
         </div>
-        <div class="details">
-            <div class="statistics">
-                <div class="statistics__title">In The Whole World</div>
-                <div class="statistics-case statisitics__parameter">
-                    Cases:
-                    <div class="statistics-case__value">313131131</div>
-                </div>
-                <div class="statistics-death statisitics__parameter">
-                    Deaths:
-                    <div class="statistics-death__value">1313131</div>
-                </div>
-                <div class="statistics-recover statisitics__parameter">
-                    Recovered:
-                    <div class="statistic-recover__value">13131313</div>
-                </div>
-            </div>
-            <button class="units-change__button">Per 100 000 men</button>
-            <div class="search">
-                <div class="serach__input-box">
-                    <input type="search" class="search__input">
-                    <ul class="search__possible-variants">
-                        <!-- <li class="search__possible-country">
+        <button class="units-change__button">Per 100 000 men</button>
+        <div class="search">
+          <div class="serach__input-box">
+            <input type="search" class="search__input" />
+            <ul class="search__possible-variants">
+              <!-- <li class="search__possible-country">
                             Belarus
                         </li>
                         <li class="search__possible-country">
                             Russia
                         </li> -->
-                    </ul>
-                </div>
-                <button class="search__button">Search</button>
-            </div>
-            <canvas id="graph" class="graph" height="35%">
-    
-            </canvas>
+            </ul>
+          </div>
+          <button class="search__button">Search</button>
         </div>
-
+        <canvas id="graph" class="graph" height="35%"> </canvas>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
